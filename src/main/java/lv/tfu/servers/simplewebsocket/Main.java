@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     protected static boolean WELCOME_MESSAGE = true;
-    protected static boolean ECHO_SERVER = false;
+    protected static boolean ECHO_SERVER = true;
 
     private static ArrayList<Session> clients = new ArrayList<Session>();
     private static int PORT = 8080;
@@ -82,7 +82,7 @@ public class Main {
         }
     }
 
-    protected static void addClients(Session session) {
+    protected static void addClient(Session session) {
         Main.clients.add(session);
     }
 
@@ -90,7 +90,7 @@ public class Main {
         return Main.clients;
     }
 
-    protected static void removeClients(Session session) {
+    protected static void removeClient(Session session) {
         Main.clients.remove(session);
     }
 }

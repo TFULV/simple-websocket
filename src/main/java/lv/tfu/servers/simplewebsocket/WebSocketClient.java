@@ -16,7 +16,7 @@ public class WebSocketClient {
                 ex.printStackTrace();
             }
         }
-        Main.addClients(session);
+        Main.addClient(session);
     }
 
     @OnMessage
@@ -34,7 +34,7 @@ public class WebSocketClient {
     @OnClose
     public void onClose(Session session) {
         System.out.println("Session " +session.getId()+" has ended");
-        Main.removeClients(session);
+        Main.removeClient(session);
     }
 
     @OnError
