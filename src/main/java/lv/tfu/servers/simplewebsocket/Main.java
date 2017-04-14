@@ -17,6 +17,7 @@ public class Main {
         DEFAULT,
         HELP,
         PRINT,
+        PRIVATE,
         EXIT
     }
 
@@ -45,21 +46,25 @@ public class Main {
 
                 switch (enumVal) {
                     case HELP:
-                        System.out.println("Commands:\n print [string] - Write to all connected clients\n exit - The process ends");
+                        System.out.println("Commands:\n print [string] - Write to all connected clients\n to [session-id] [string] - Write to current client\n exit - The process ends");
                         break;
                     case PRINT:
-                        if(Main.getClients().size() > 0) {
-                            try {
-                                for (Session session: Main.getClients()) {
-                                    session.getBasicRemote().sendText(commandLine.substring(6));
-                                }
-                                System.out.println("Has been sent to " + Main.getClients().size() + " clients");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        if(commandLine.length() < 5) {
+                            System.out.println("You did not enter a message");
                         }
                         else {
-                            System.out.println("No connected clients");
+                            String message = commandLine.substring(6);
+                            sendMessage(message);
+                        }
+                        break;
+                    case PRIVATE:
+                        if(commandLine.length() < 44) {
+                            System.out.println("You did not enter a message");
+                        }
+                        else {
+                            String message = commandLine.substring(45);
+                            String searchingId = commandLine.substring(8, 44);
+                            sendMessage(message, searchingId);
                         }
                         break;
                     case EXIT:
@@ -92,5 +97,36 @@ public class Main {
 
     protected static void removeClient(Session session) {
         Main.clients.remove(session);
+    }
+
+    private static void sendMessage(String message) {
+        sendMessage(message, null);
+    }
+
+    private static void sendMessage(String message, String sessionId) {
+        if(Main.getClients().size() > 0) {
+            try {
+                int count = 0;
+                for (Session session: Main.getClients()) {
+                    if(sessionId != null) {
+                        if(session.getId().equals(sessionId)) {
+                            session.getBasicRemote().sendText(message);
+                            count++;
+                            break;
+                        }
+                    }
+                    else {
+                        session.getBasicRemote().sendText(message);
+                        count++;
+                    }
+                }
+                System.out.println("Has been sent to " + count + " client" + (count > 1 ? "s" : ""));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.out.println("No connected clients");
+        }
     }
 }
